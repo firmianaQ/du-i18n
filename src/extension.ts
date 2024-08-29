@@ -543,7 +543,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						const initLang = deyi.getTranslateLangs();
 						const keys = deyi.getQuoteKeys();
 						const defaultLang = deyi.getDefaultLang();
-						const prefixKey = deyi.getPrefixKey(fileName);
+						const prefixKey = await deyi.getPrefixKey(fileName);
 						const tempPaths = deyi.getTempPaths();
 						const pageEnName = deyi.generatePageEnName(fileName);
 						const tempFileName = deyi.getTempFileName();
@@ -626,9 +626,10 @@ export async function activate(context: vscode.ExtensionContext) {
 							await deyi.refreshGlobalLangObj();
 							renderDecoration(deyi);
 						};
-						files.forEach((file, i) => {
+						 for (let i = 0; i < files.length; i++) {
+							const file = files[i];
 							const fileName = file.fsPath;
-							const prefixKey = deyi.getPrefixKey(fileName, i.toString());
+							const prefixKey = await deyi.getPrefixKey(fileName, i.toString());
 							const pageEnName = deyi.generatePageEnName(fileName);
 							const tempFileName = deyi.getTempFileName();
 							const isNeedRandSuffix = deyi.getIsNeedRandSuffix();
@@ -660,7 +661,7 @@ export async function activate(context: vscode.ExtensionContext) {
 									});
 								}
 							});
-						});
+						}
 					}
 				} catch(e) {
 					console.error("multiScanAndGenerate e", e);

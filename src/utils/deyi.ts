@@ -4,6 +4,7 @@ import {
   getFiles,
   getBaseFilePath,
   writeContentToLocalFile,
+  getBasePath,
 } from './index';
 import * as API from './api';
 const fs = require('fs');
@@ -11,6 +12,7 @@ const path = require('path');
 const isEmpty = require('lodash/isEmpty');
 
 export class DEYI {
+  private rootPath: string;
   private configFilePath: string;
   private projectName: string;
   private projectShortName: string;
@@ -128,6 +130,7 @@ export class DEYI {
 
   getInitConfig() {
     const initConfig = {
+      rootPath:'',
       quoteKeys: this.quoteKeys,
       defaultLang: this.defaultLang,
       tempLangs: this.tempLangs,
@@ -582,9 +585,10 @@ export class DEYI {
     return '';
   }
 
-  getKeyPrefix(filePath: string, index: string = '') {
-    let dirName = path.dirname(filePath);
-    dirName = dirName.split(path.sep).slice(-1)[0];
+  async getKeyPrefix(filePath: string, index: string = '') {
+    const basePath = await getBasePath();
+    let dirName = path.dirname(filePath).replace(basePath,'').replaceAll(path.sep, '.');
+    dirName = dirName.startsWith('.') ? dirName.substr(1) : dirName;
     let fileName = path.basename(filePath);
     fileName = fileName.split('.')[0];
     let key = typeof this.prefixKey === 'string' ? this.prefixKey : `${dirName}.${fileName}`;
@@ -593,10 +597,10 @@ export class DEYI {
     return `${key}.${rand}${rand2}-`;
   }
 
-  getPrefixKey(fsPath: string, index: string = '') {
+  async getPrefixKey(fsPath: string, index: string = '') {
     const pageEnName = this.generatePageEnName(fsPath);
     const basePrefix = this.getBasePrefix(pageEnName);
-    const secondPrefix = this.getKeyPrefix(fsPath, index);
+    const secondPrefix = await this.getKeyPrefix(fsPath, index);
     const key = `${basePrefix}${secondPrefix}`;
     return key;
   }
@@ -661,10 +665,10 @@ export class DEYI {
           const repeatPathList = [];
           const moduleObj = {};
           const existObj = {};
-          files.forEach(({ fsPath }) => {
+          for (const { fsPath } of files) {
             if (/\.(vue|jsx|tsx)$/.test(fsPath)) {
               const pageEnName = this.generatePageEnName(fsPath);
-              const key = this.getPrefixKey(fsPath);
+              const key = await this.getPrefixKey(fsPath);
               if (!existObj[key]) {
                 existObj[key] = fsPath;
               } else {
@@ -678,7 +682,7 @@ export class DEYI {
                 }
               }
             }
-          });
+          }
           resolve({ repeatPathList, moduleObj });
         }
       } catch(e) {

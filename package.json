@@ -1,9 +1,9 @@
 {
-	"name": "du-i18n",
-	"displayName": "Du I18N",
-	"description": "vscode国际化多语言解决方案",
-	"author": "程天庆",
-	"publisher": "DewuTeam",
+	"name": "wyh-du-i18n",
+	"displayName": "wyh Du I18N",
+	"description": "vscode国际化多语言解决方案 基于 Du I18N 修改",
+	"author": "wyh",
+	"publisher": "wyh",
 	"version": "1.3.25",
 	"engines": {
 		"vscode": "^1.59.0"

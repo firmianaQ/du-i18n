@@ -378,7 +378,7 @@ export async function handleAnalystics(selectFolderPath: any, bigFileLineCount: 
 export async function getProjectInfo() {
   const projectInfoList = [];
   try {
-    const basePath = getBasePath();
+    const basePath = await getBasePath();
     const fsPath = path.join(basePath, 'package.json');
     const data = fs.readFileSync(fsPath, 'utf-8');
     if (data) {
@@ -412,7 +412,7 @@ export async function getBasePath() {
       }
     }
   });
-  // console.log('basePath', basePath);
+  console.error('basePath', basePath);
   return basePath;
 }
 
